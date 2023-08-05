@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">FootballTeam</string>
+    <string name="no_data">Empty data</string>
+    <string name="something_wrong">Oops.. something went wrong</string>
+    <string name="stadium">Stadium</string>
+    <string name="image">image</string>
+    <string name="liga_inggris">English Premiere League</string>
+    <string name="sosial_media">Sosial Media</string>
+    <string name="instagram">instagram</string>
+    <string name="twitter">twitter</string>
+    <string name="youtube">youtube</string>
+    <string name="website">website</string>
+    <string name="favorite">favorite</string>
+    <string name="title_favorite">Favorite</string>
+    <string name="search">search</string>
+</resources>
