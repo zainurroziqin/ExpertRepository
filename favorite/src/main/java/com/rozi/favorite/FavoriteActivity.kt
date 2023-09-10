@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.rozi.core.domain.model.Team
 import com.rozi.favorite.databinding.ActivityFavoriteBinding
 import com.rozi.favorite.di.favoriteModule
 import com.rozi.footballteam.R
@@ -27,22 +28,23 @@ class FavoriteActivity : AppCompatActivity() {
 
         supportActionBar?.title = getString(R.string.title_favorite)
 
-        val teamAdapter = ListTeamAdapter()
-        teamAdapter.onItemClick = { selectedData ->
-            val intent = Intent(this@FavoriteActivity, DetailActivity::class.java)
-            intent.putExtra(DetailActivity.DATA_TEAMS, selectedData)
-            startActivity(intent)
-        }
 
         viewModel.favoriteTeam.observe(this) { teams ->
-            teamAdapter.setData(teams)
+            val teamAdapter = ListTeamAdapter(teams)
+            teamAdapter.setOnItemClickCallback(object :
+                ListTeamAdapter.OnItemClickCallBack {
+                override fun onItemClicked(data: Team) {
+                    val intent = Intent(this@FavoriteActivity, DetailActivity::class.java)
+                    intent.putExtra(DetailActivity.DATA_TEAMS, data)
+                    startActivity(intent)
+                }
+            })
+            with(binding.rvTeam){
+                layoutManager = LinearLayoutManager(context)
+                setHasFixedSize(true)
+                adapter = teamAdapter
+            }
             binding.tvError.visibility = if(teams.isNotEmpty()) View.GONE else View.VISIBLE
-        }
-
-        with(binding.rvTeam){
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(true)
-            adapter = teamAdapter
         }
     }
 }

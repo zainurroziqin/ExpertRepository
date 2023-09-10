@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rozi.core.data.Resource
+import com.rozi.core.domain.model.Team
 import com.rozi.footballteam.R
 import com.rozi.footballteam.databinding.ActivityMainBinding
 import com.rozi.footballteam.presentation.detail.DetailActivity
@@ -26,34 +27,35 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.title = getString(R.string.liga_inggris)
 
-        val teamAdapter = ListTeamAdapter()
-        teamAdapter.onItemClick = {selectedData ->
-            val intent = Intent(this@MainActivity, DetailActivity::class.java)
-            intent.putExtra(DetailActivity.DATA_TEAMS, selectedData)
-            startActivity(intent)
-        }
-
-        mainViewModel.teams.observe(this){ teams ->
-            if(teams != null){
-                when (teams){
+        mainViewModel.teams.observe(this) { teams ->
+            if (teams != null) {
+                when (teams) {
                     is Resource.Loading -> binding.progressBar.visibility = View.VISIBLE
                     is Resource.Success -> {
                         binding.progressBar.visibility = View.INVISIBLE
-                        teamAdapter.setData(teams.data)
+                        val teamAdapter = ListTeamAdapter(teams.data ?: emptyList())
+                        teamAdapter.setOnItemClickCallback(object :
+                            ListTeamAdapter.OnItemClickCallBack {
+                            override fun onItemClicked(data: Team) {
+                                val intent = Intent(this@MainActivity, DetailActivity::class.java)
+                                intent.putExtra(DetailActivity.DATA_TEAMS, data)
+                                startActivity(intent)
+                            }
+                        })
+                        with(binding.rvTeam){
+                            layoutManager = LinearLayoutManager(context)
+                            setHasFixedSize(true)
+                            adapter = teamAdapter
+                        }
                     }
                     is Resource.Error -> {
                         binding.progressBar.visibility = View.GONE
                         binding.viewError.root.visibility = View.VISIBLE
-                        binding.viewError.tvError.text = teams.message ?: getString(R.string.something_wrong)
+                        binding.viewError.tvError.text =
+                            teams.message ?: getString(R.string.something_wrong)
                     }
                 }
             }
-        }
-
-        with(binding.rvTeam){
-            layoutManager = LinearLayoutManager(context)
-            setHasFixedSize(true)
-            adapter = teamAdapter
         }
     }
 

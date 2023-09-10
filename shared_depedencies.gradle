@@ -19,4 +19,7 @@ dependencies {
 
     implementation "com.github.bumptech.glide:glide:4.13.2"
     api "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+
+    //leak canary
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.10'
 }

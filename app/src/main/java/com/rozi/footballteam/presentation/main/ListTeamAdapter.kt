@@ -8,18 +8,13 @@ import com.bumptech.glide.Glide
 import com.rozi.core.domain.model.Team
 import com.rozi.footballteam.R
 import com.rozi.footballteam.databinding.ItemTeamsBinding
-import java.util.ArrayList
 
-class ListTeamAdapter : RecyclerView.Adapter<ListTeamAdapter.ListViewHolder>() {
+class ListTeamAdapter(private val listTeam : List<Team>) : RecyclerView.Adapter<ListTeamAdapter.ListViewHolder>() {
 
-    private var listData = ArrayList<Team>()
-    var onItemClick: ((Team) -> Unit)? = null
+    private lateinit var onItemClickCallback : OnItemClickCallBack
 
-    fun setData(newListData: List<Team>?) {
-        if (newListData == null) return
-        listData.clear()
-        listData.addAll(newListData)
-        notifyDataSetChanged()
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallBack) {
+        this.onItemClickCallback = onItemClickCallback
     }
 
     inner class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -33,12 +28,6 @@ class ListTeamAdapter : RecyclerView.Adapter<ListTeamAdapter.ListViewHolder>() {
                 tvItemDescription.text = data.stadium
             }
         }
-
-        init {
-            binding.root.setOnClickListener{
-                onItemClick?.invoke(listData[adapterPosition])
-            }
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder =
@@ -47,10 +36,15 @@ class ListTeamAdapter : RecyclerView.Adapter<ListTeamAdapter.ListViewHolder>() {
         )
 
 
-    override fun getItemCount() = listData.size
+    override fun getItemCount() = listTeam.size
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
-        val data = listData[position]
+        val data = listTeam[position]
         holder.bind(data)
+        holder.itemView.setOnClickListener{onItemClickCallback.onItemClicked(listTeam[position])}
+    }
+
+    interface OnItemClickCallBack {
+        fun onItemClicked(data: Team)
     }
 }
