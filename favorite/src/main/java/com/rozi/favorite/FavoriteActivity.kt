@@ -44,7 +44,10 @@ class FavoriteActivity : AppCompatActivity() {
                 setHasFixedSize(true)
                 adapter = teamAdapter
             }
-            binding.tvError.visibility = if(teams.isNotEmpty()) View.GONE else View.VISIBLE
+            if(teams.isEmpty()){
+                binding.progressBar.visibility = View.INVISIBLE
+                binding.tvError.visibility = View.VISIBLE
+            }
         }
     }
 }
